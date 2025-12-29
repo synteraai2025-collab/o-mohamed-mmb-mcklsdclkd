@@ -47,8 +47,12 @@ export default function SmartDeviceCard({ device, onToggle, onValueChange }: Sma
     }
   };
 
-  const handleValueChange = (value: number[]) => {
-    onValueChange(device.id, value[0]);
+  const handleValueChange = async (value: number[]) => {
+    try {
+      onValueChange(device.id, value[0]);
+    } catch (error) {
+      console.error('Failed to update device value:', error);
+    }
   };
 
   const getDeviceIcon = () => {
@@ -180,4 +184,5 @@ export default function SmartDeviceCard({ device, onToggle, onValueChange }: Sma
     </Card>
   );
 }
+
 
