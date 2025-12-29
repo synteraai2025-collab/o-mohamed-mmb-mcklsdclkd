@@ -71,8 +71,12 @@ export default function SecurityCameraFeed({ camera, onRefresh, onToggleRecordin
     }
   };
 
-  const handleToggleRecording = () => {
-    onToggleRecording(camera.id, !camera.isRecording);
+  const handleToggleRecording = async () => {
+    try {
+      onToggleRecording(camera.id, !camera.isRecording);
+    } catch (error) {
+      console.error('Failed to toggle recording:', error);
+    }
   };
 
   const handlePlayPause = () => {
@@ -273,4 +277,5 @@ export default function SecurityCameraFeed({ camera, onRefresh, onToggleRecordin
     </Card>
   );
 }
+
 
