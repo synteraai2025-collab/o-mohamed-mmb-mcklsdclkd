@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import SmartDeviceCard from '@/components/SmartDeviceCard';
 import SecurityCameraFeed from '@/components/SecurityCameraFeed';
-import { 
-  Home, 
-  Shield, 
-  Settings,
-  Bell,
-  User
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Device {
   id: string;
@@ -298,3 +292,4 @@ export default function Home() {
     </div>
   );
 }
+
