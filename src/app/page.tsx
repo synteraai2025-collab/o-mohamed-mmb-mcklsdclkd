@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SmartDeviceCard from '@/components/SmartDeviceCard';
 import SecurityCameraFeed from '@/components/SecurityCameraFeed';
+import { useDeviceStore, initializeMockData } from '@/lib/device-state';
 import { Button } from '@/components/ui/button';
 import { 
   Home, 
@@ -299,5 +300,6 @@ export default function Home() {
     </div>
   );
 }
+
 
 
