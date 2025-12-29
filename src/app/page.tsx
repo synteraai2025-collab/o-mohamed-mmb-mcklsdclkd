@@ -1,42 +1,212 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import SmartDeviceCard from '@/components/SmartDeviceCard';
+import SecurityCameraFeed from '@/components/SecurityCameraFeed';
+import { useDeviceStore, initializeMockData } from '@/lib/device-state';
+import { Button } from '@/components/ui/button';
+import { 
+  Home, 
+  Shield, 
+  Settings,
+  Bell,
+  User
+} from 'lucide-react';
+
+interface Device {
+  id: string;
+  name: string;
+  type: 'light' | 'thermostat' | 'camera';
+  status: 'online' | 'offline';
+  isOn: boolean;
+  value?: number;
+  unit?: string;
+  location: string;
+}
+
+interface Camera {
+  id: string;
+  name: string;
+  location: string;
+  feedUrl: string;
+  status: 'online' | 'offline';
+  isRecording: boolean;
+  lastUpdated: string;
+}
 
 export default function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50/30 flex items-center justify-center px-6">
-      <div className="text-center max-w-md w-full">
-        {/* Logo with subtle elegance */}
-        <div className="mb-8">
-          <div className="relative inline-block">
-            {/* Logo container with refined shadow */}
-            <div className="w-20 h-20 flex items-center justify-center mx-auto">
-              <Image 
-                src="/images/syntera-logo.svg" 
-                alt="Syntera" 
-                width={64}
-                height={64}
-                className="transition-transform duration-300 hover:scale-110"
-              />
-            </div>
-          </div>
-        </div>
-        
-        {/* Clean loading state */}
-        <div className="space-y-8">
-          {/* Main loading indicator */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-center space-x-3">
-              <p className="text-xl text-slate-700 font-medium">
-                AI agent is designing your website...
-              </p>
-            </div>
+  const { devices, cameras, toggleDevice, updateDeviceValue, refreshCamera, toggleCameraRecording } = useDeviceStore();
 
-            {/* Refined spinner */}
-            <div className="flex items-center justify-center space-x-3">
-              <div className="w-8 h-8 border-4 border-solid border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+  useEffect(() => {
+    // Initialize mock data on component mount
+    initializeMockData();
+  }, []);
+
+  const handleDeviceToggle = (deviceId: string, isOn: boolean) => {
+    toggleDevice(deviceId, isOn);
+  };
+
+  const handleDeviceValueChange = (deviceId: string, value: number) => {
+    updateDeviceValue(deviceId, value);
+  };
+
+  const handleCameraRefresh = (cameraId: string) => {
+    refreshCamera(cameraId);
+  };
+
+  const handleCameraRecording = (cameraId: string, isRecording: boolean) => {
+    toggleCameraRecording(cameraId, isRecording);
+  };
+
+  const lights = devices.filter(device => device.type === 'light');
+  const thermostats = devices.filter(device => device.type === 'thermostat');
+  const deviceCameras = devices.filter(device => device.type === 'camera');
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="bg-card border-b border-border mb-8">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Home className="h-8 w-8 text-primary" />
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Smart Home Control</h1>
+                <p className="text-sm text-muted-foreground">Manage your devices and security</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Bell className="h-4 w-4" />
+                Alerts
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </Button>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <User className="h-4 w-4" />
+                Profile
+              </Button>
             </div>
           </div>
         </div>
+      </header>
+
+      <div className="container mx-auto px-4 pb-8">
+        {/* Security Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Shield className="h-6 w-6 text-accent" />
+            <h2 className="text-xl font-semibold text-foreground">Security Cameras</h2>
+            <span className="text-sm text-muted-foreground">
+              {cameras.filter(cam => cam.status === 'online').length} of {cameras.length} online
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cameras.map((camera) => (
+              <SecurityCameraFeed
+                key={camera.id}
+                camera={camera}
+                onRefresh={handleCameraRefresh}
+                onToggleRecording={handleCameraRecording}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Smart Devices Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Settings className="h-6 w-6 text-primary" />
+            <h2 className="text-xl font-semibold text-foreground">Smart Devices</h2>
+            <span className="text-sm text-muted-foreground">
+              {devices.filter(device => device.status === 'online').length} of {devices.length} online
+            </span>
+          </div>
+
+          {/* Lights */}
+          {lights.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-foreground mb-4">Lighting</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {lights.map((device) => (
+                  <SmartDeviceCard
+                    key={device.id}
+                    device={device}
+                    onToggle={handleDeviceToggle}
+                    onValueChange={handleDeviceValueChange}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Thermostats */}
+          {thermostats.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-foreground mb-4">Climate Control</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {thermostats.map((device) => (
+                  <SmartDeviceCard
+                    key={device.id}
+                    device={device}
+                    onToggle={handleDeviceToggle}
+                    onValueChange={handleDeviceValueChange}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Device Cameras */}
+          {deviceCameras.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium text-foreground mb-4">Device Cameras</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {deviceCameras.map((device) => (
+                  <SmartDeviceCard
+                    key={device.id}
+                    device={device}
+                    onToggle={handleDeviceToggle}
+                    onValueChange={handleDeviceValueChange}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* System Status */}
+        <section className="bg-card rounded-lg border border-border p-6">
+          <h3 className="text-lg font-medium text-foreground mb-4">System Status</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-1">
+                {devices.filter(d => d.status === 'online').length}
+              </div>
+              <div className="text-sm text-muted-foreground">Devices Online</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-accent mb-1">
+                {cameras.filter(c => c.status === 'online').length}
+              </div>
+              <div className="text-sm text-muted-foreground">Cameras Online</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-500 mb-1">
+                {cameras.filter(c => c.isRecording).length}
+              </div>
+              <div className="text-sm text-muted-foreground">Recording</div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
 }
+
+
+
+
+
