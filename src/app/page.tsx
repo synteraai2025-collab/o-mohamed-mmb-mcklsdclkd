@@ -35,100 +35,12 @@ interface Camera {
 }
 
 export default function Home() {
-  // Mock data for smart devices
-  const [devices, setDevices] = useState<Device[]>([
-    {
-      id: '1',
-      name: 'Living Room Light',
-      type: 'light',
-      status: 'online',
-      isOn: true,
-      value: 75,
-      unit: '%',
-      location: 'Living Room'
-    },
-    {
-      id: '2',
-      name: 'Kitchen Thermostat',
-      type: 'thermostat',
-      status: 'online',
-      isOn: true,
-      value: 72,
-      unit: '°F',
-      location: 'Kitchen'
-    },
-    {
-      id: '3',
-      name: 'Front Door Camera',
-      type: 'camera',
-      status: 'online',
-      isOn: true,
-      value: 180,
-      unit: '°',
-      location: 'Front Door'
-    },
-    {
-      id: '4',
-      name: 'Bedroom Light',
-      type: 'light',
-      status: 'offline',
-      isOn: false,
-      value: 0,
-      unit: '%',
-      location: 'Master Bedroom'
-    },
-    {
-      id: '5',
-      name: 'Garage Camera',
-      type: 'camera',
-      status: 'online',
-      isOn: false,
-      value: 90,
-      unit: '°',
-      location: 'Garage'
-    },
-    {
-      id: '6',
-      name: 'Office Thermostat',
-      type: 'thermostat',
-      status: 'online',
-      isOn: true,
-      value: 68,
-      unit: '°F',
-      location: 'Home Office'
-    }
-  ]);
+  const { devices, cameras, toggleDevice, updateDeviceValue, refreshCamera, toggleCameraRecording } = useDeviceStore();
 
-  // Mock data for security cameras
-  const [cameras, setCameras] = useState<Camera[]>([
-    {
-      id: 'cam1',
-      name: 'Front Door Camera',
-      location: 'Front Entrance',
-      feedUrl: '/api/camera/front-door',
-      status: 'online',
-      isRecording: true,
-      lastUpdated: '2 minutes ago'
-    },
-    {
-      id: 'cam2',
-      name: 'Backyard Camera',
-      location: 'Backyard Patio',
-      feedUrl: '/api/camera/backyard',
-      status: 'online',
-      isRecording: false,
-      lastUpdated: '5 minutes ago'
-    },
-    {
-      id: 'cam3',
-      name: 'Garage Camera',
-      location: 'Garage Interior',
-      feedUrl: '/api/camera/garage',
-      status: 'offline',
-      isRecording: false,
-      lastUpdated: '1 hour ago'
-    }
-  ]);
+  useEffect(() => {
+    // Initialize mock data on component mount
+    initializeMockData();
+  }, []);
 
   const handleDeviceToggle = (deviceId: string, isOn: boolean) => {
     setDevices(prev => prev.map(device => 
@@ -300,6 +212,7 @@ export default function Home() {
     </div>
   );
 }
+
 
 
 
