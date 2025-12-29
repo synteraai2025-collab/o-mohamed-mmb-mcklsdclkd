@@ -36,11 +36,15 @@ export default function SmartDeviceCard({ device, onToggle, onValueChange }: Sma
 
   const handleToggle = async () => {
     setIsLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
       onToggle(device.id, !device.isOn);
+    } catch (error) {
+      console.error('Failed to toggle device:', error);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   const handleValueChange = (value: number[]) => {
@@ -176,3 +180,4 @@ export default function SmartDeviceCard({ device, onToggle, onValueChange }: Sma
     </Card>
   );
 }
+
