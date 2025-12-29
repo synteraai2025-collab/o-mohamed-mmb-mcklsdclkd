@@ -43,26 +43,19 @@ export default function Home() {
   }, []);
 
   const handleDeviceToggle = (deviceId: string, isOn: boolean) => {
-    setDevices(prev => prev.map(device => 
-      device.id === deviceId ? { ...device, isOn } : device
-    ));
+    toggleDevice(deviceId, isOn);
   };
 
   const handleDeviceValueChange = (deviceId: string, value: number) => {
-    setDevices(prev => prev.map(device => 
-      device.id === deviceId ? { ...device, value } : device
-    ));
+    updateDeviceValue(deviceId, value);
   };
 
   const handleCameraRefresh = (cameraId: string) => {
-    // Simulate camera refresh
-    console.log(`Refreshing camera: ${cameraId}`);
+    refreshCamera(cameraId);
   };
 
   const handleCameraRecording = (cameraId: string, isRecording: boolean) => {
-    setCameras(prev => prev.map(camera => 
-      camera.id === cameraId ? { ...camera, isRecording } : camera
-    ));
+    toggleCameraRecording(cameraId, isRecording);
   };
 
   const lights = devices.filter(device => device.type === 'light');
@@ -212,6 +205,7 @@ export default function Home() {
     </div>
   );
 }
+
 
 
 
