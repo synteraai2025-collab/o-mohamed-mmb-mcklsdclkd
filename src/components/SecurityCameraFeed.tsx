@@ -51,18 +51,24 @@ export default function SecurityCameraFeed({ camera, onRefresh, onToggleRecordin
     return () => clearTimeout(timer);
   }, [camera.feedUrl]);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsLoading(true);
     setHasError(false);
-    onRefresh(camera.id);
     
-    // Simulate refresh delay
-    setTimeout(() => {
+    try {
+      onRefresh(camera.id);
+      // Simulate refresh delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setIsLoading(false);
+      // Simulate random errors for demo purposes
       if (Math.random() > 0.8) {
         setHasError(true);
       }
-    }, 1000);
+    } catch (error) {
+      console.error('Failed to refresh camera:', error);
+      setHasError(true);
+      setIsLoading(false);
+    }
   };
 
   const handleToggleRecording = () => {
@@ -267,3 +273,4 @@ export default function SecurityCameraFeed({ camera, onRefresh, onToggleRecordin
     </Card>
   );
 }
+
